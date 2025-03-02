@@ -90,4 +90,13 @@ public class PublicationService implements IPublicationService {
             return Optional.empty();
         }
     }
+
+    @Override
+    public void incrementViewCount(Long id) {
+        publicationRepository.findById(id).ifPresent(publication -> {
+            publication.setViewCount(publication.getViewCount() + 1);
+            publication.setUpdatedAt(LocalDateTime.now());
+            publicationRepository.save(publication);
+        });
+    }
 }
