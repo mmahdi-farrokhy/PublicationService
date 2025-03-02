@@ -13,10 +13,6 @@ import java.util.Map;
 
 @Entity
 @Table(name = "publication")
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class Publication {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,6 +50,104 @@ public class Publication {
     @PreUpdate
     private void preUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public Publication() {
+    }
+
+    public Publication(Long id, String title, String description, int viewCount, LocalDateTime publishedAt, LocalDateTime updatedAt, PublicationType type, PublicationStatus status, Map<String, Integer> frequentWords) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.viewCount = viewCount;
+        this.publishedAt = publishedAt;
+        this.updatedAt = updatedAt;
+        this.type = type;
+        this.status = status;
+        this.frequentWords = frequentWords;
+    }
+
+    public Publication(String title, String description, int viewCount, LocalDateTime publishedAt, LocalDateTime updatedAt, PublicationType type, PublicationStatus status, Map<String, Integer> frequentWords) {
+        this.title = title;
+        this.description = description;
+        this.viewCount = viewCount;
+        this.publishedAt = publishedAt;
+        this.updatedAt = updatedAt;
+        this.type = type;
+        this.status = status;
+        this.frequentWords = frequentWords;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public int getViewCount() {
+        return viewCount;
+    }
+
+    public void setViewCount(int viewCount) {
+        this.viewCount = viewCount;
+    }
+
+    public LocalDateTime getPublishedAt() {
+        return publishedAt;
+    }
+
+    public void setPublishedAt(LocalDateTime publishedAt) {
+        this.publishedAt = publishedAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public PublicationType getType() {
+        return type;
+    }
+
+    public void setType(PublicationType type) {
+        this.type = type;
+    }
+
+    public PublicationStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(PublicationStatus status) {
+        this.status = status;
+    }
+
+    public Map<String, Integer> getFrequentWords() {
+        return frequentWords;
+    }
+
+    public void setFrequentWords(Map<String, Integer> frequentWords) {
+        this.frequentWords = frequentWords;
     }
 
     public void incrementViewCount() {

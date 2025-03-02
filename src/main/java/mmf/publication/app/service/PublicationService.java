@@ -1,6 +1,5 @@
 package mmf.publication.app.service;
 
-import lombok.RequiredArgsConstructor;
 import mmf.publication.app.dto.PublicationDTO;
 import mmf.publication.app.dto.PublicationRequest;
 import mmf.publication.app.entity.Publication;
@@ -17,17 +16,35 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class PublicationService implements IPublicationService {
     private final PublicationRepository publicationRepository;
 
+    public PublicationService(PublicationRepository publicationRepository) {
+        this.publicationRepository = publicationRepository;
+    }
+
     @Override
-    public Page<PublicationDTO> getPublications(String search, PublicationStatus status, PublicationType type, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
-        Specification<Publication> spec = Specification
-                .where(PublicationSpecification.hasTitleOrDescriptionContaining(search))
-                .and(PublicationSpecification.hasStatus(status))
-                .and(PublicationSpecification.publishedBetween(startDate, endDate))
-                .and(PublicationSpecification.hasType(type));
+    public Page<PublicationDTO> getPublications(String search, PublicationStatus status, PublicationType type,
+                                                LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
+        // Start with an empty specification
+        Specification<Publication> spec = Specification.where(null);
+
+        // Add each filter only if the parameter is provided
+        if (search != null && !search.isEmpty()) {
+            spec = spec.and(PublicationSpecification.hasTitleOrDescriptionContaining(search));
+        }
+
+        if (status != null) {
+            spec = spec.and(PublicationSpecification.hasStatus(status));
+        }
+
+        if (type != null) {
+            spec = spec.and(PublicationSpecification.hasType(type));
+        }
+
+        if (startDate != null || endDate != null) {
+            spec = spec.and(PublicationSpecification.publishedBetween(startDate, endDate));
+        }
 
         return publicationRepository.findAll(spec, pageable).map(this::convertToDTO);
     }
