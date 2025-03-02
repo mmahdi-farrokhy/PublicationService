@@ -2,6 +2,7 @@ package mmf.publication.app.specifications;
 
 import mmf.publication.app.entity.Publication;
 import mmf.publication.app.enums.PublicationStatus;
+import mmf.publication.app.enums.PublicationType;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDateTime;
@@ -22,6 +23,13 @@ public class PublicationSpecification {
                 (status == null) ?
                         criteriaBuilder.conjunction() :
                         criteriaBuilder.equal(root.get("status"), status);
+    }
+
+    public static Specification<Publication> hasType(PublicationType type) {
+        return (root, query, criteriaBuilder) ->
+                (type == null) ?
+                        criteriaBuilder.conjunction() :
+                        criteriaBuilder.equal(root.get("type"), type);
     }
 
     public static Specification<Publication> publishedBetween(LocalDateTime startDate, LocalDateTime endDate) {
