@@ -19,7 +19,7 @@ public interface IPublicationService {
 
     Optional<PublicationDTO> updatePublication(Long id, PublicationRequest request);
 
-    Optional<PublicationDTO> togglePublicationStatus(Long id, PublicationStatus status);
+    Optional<PublicationDTO> updatePublicationStatus(Long id, PublicationStatus status);
 
 
     void incrementViewCount(Long id);
