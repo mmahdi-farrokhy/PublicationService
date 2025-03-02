@@ -77,4 +77,17 @@ public class PublicationService implements IPublicationService {
             return Optional.empty();
         }
     }
+
+    @Override
+    public Optional<PublicationDTO> updatePublicationStatus(Long id, PublicationStatus status) {
+        Optional<Publication> publicationById = publicationRepository.findById(id);
+        if (publicationById.isPresent()) {
+            Publication publication = publicationById.get();
+            publication.setStatus(status);
+            Publication updatedPublication = publicationRepository.save(publication);
+            return Optional.of(convertToDTO(updatedPublication));
+        } else {
+            return Optional.empty();
+        }
+    }
 }
