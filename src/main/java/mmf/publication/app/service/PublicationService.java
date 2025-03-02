@@ -52,9 +52,9 @@ public class PublicationService implements IPublicationService {
         publication.setTitle(request.getTitle());
         publication.setDescription(request.getDescription());
         publication.setType(request.getType());
+        publication.setStatus(request.getStatus());
         publication.setPublishedAt(LocalDateTime.now());
         publication.setUpdatedAt(LocalDateTime.now());
-        publication.setStatus(PublicationStatus.ACTIVE);
         publication.setViewCount(0);
         Publication savedPublication = publicationRepository.save(publication);
         return convertToDTO(savedPublication);
