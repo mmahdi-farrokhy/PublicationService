@@ -3,6 +3,7 @@ package mmf.publication.app.entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import mmf.publication.app.enums.PublicationStatus;
 import mmf.publication.app.enums.PublicationType;
@@ -15,6 +16,7 @@ import java.util.Map;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class Publication {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
