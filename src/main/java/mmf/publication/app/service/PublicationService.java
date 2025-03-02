@@ -14,6 +14,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -57,5 +58,23 @@ public class PublicationService implements IPublicationService {
         publication.setViewCount(0);
         Publication savedPublication = publicationRepository.save(publication);
         return convertToDTO(savedPublication);
+    }
+
+    @Override
+    public Optional<PublicationDTO> updatePublication(Long id, PublicationRequest request) {
+        Optional<Publication> publicationById = publicationRepository.findById(id);
+
+        if (publicationById.isPresent()) {
+            Publication publication = publicationById.get();
+            publication.setTitle(request.getTitle());
+            publication.setDescription(request.getDescription());
+            publication.setType(request.getType());
+            publication.setStatus(request.getStatus());
+
+            Publication updatedPublication = publicationRepository.save(publication);
+            return Optional.of(convertToDTO(updatedPublication));
+        } else {
+            return Optional.empty();
+        }
     }
 }
