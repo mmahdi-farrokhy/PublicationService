@@ -3,6 +3,7 @@ package mmf.publication.app.controller;
 import mmf.publication.app.dto.PublicationDTO;
 import mmf.publication.app.dto.PublicationRequest;
 import mmf.publication.app.enums.PublicationStatus;
+import mmf.publication.app.enums.PublicationType;
 import mmf.publication.app.service.IPublicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,11 +30,11 @@ public class PublicationController {
     public ResponseEntity<Page<PublicationDTO>> getPublications(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) PublicationStatus status,
-            @RequestParam(required = false) String type,
+            @RequestParam(required = false) PublicationType type,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
             Pageable pageable) {
-        return ResponseEntity.ok(publicationService.getPublications(search, status, null, startDate, endDate, pageable));
+        return ResponseEntity.ok(publicationService.getPublications(search, status, type, startDate, endDate, pageable));
     }
 
     @PostMapping
