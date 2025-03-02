@@ -55,4 +55,8 @@ public class Publication {
     private void preUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+    public void incrementViewCount() {
+        this.viewCount++;
+    }
 }
