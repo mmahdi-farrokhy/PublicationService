@@ -2,6 +2,7 @@ package mmf.publication.app.service;
 
 import lombok.RequiredArgsConstructor;
 import mmf.publication.app.dto.PublicationDTO;
+import mmf.publication.app.dto.PublicationRequest;
 import mmf.publication.app.entity.Publication;
 import mmf.publication.app.enums.PublicationStatus;
 import mmf.publication.app.enums.PublicationType;
@@ -42,5 +43,19 @@ public class PublicationService implements IPublicationService {
                 publication.getStatus(),
                 publication.getFrequentWords()
         );
+    }
+
+    @Override
+    public PublicationDTO createPublication(PublicationRequest request) {
+        Publication publication = new Publication();
+        publication.setTitle(request.getTitle());
+        publication.setDescription(request.getDescription());
+        publication.setType(request.getType());
+        publication.setPublishedAt(LocalDateTime.now());
+        publication.setUpdatedAt(LocalDateTime.now());
+        publication.setStatus(PublicationStatus.ACTIVE);
+        publication.setViewCount(0);
+        Publication savedPublication = publicationRepository.save(publication);
+        return convertToDTO(savedPublication);
     }
 }
