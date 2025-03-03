@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/publications")
@@ -54,15 +53,23 @@ public class PublicationController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Optional<PublicationDTO>> updatePublication(
+    public ResponseEntity<PublicationDTO> updatePublication(
             @PathVariable Long id, @RequestBody PublicationRequest request) {
-        return ResponseEntity.ok(publicationService.updatePublication(id, request));
+        try {
+            return ResponseEntity.ok(publicationService.updatePublication(id, request));
+        } catch (PublicationNotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PatchMapping("/{id}/status")
-    public ResponseEntity<Optional<PublicationDTO>> updatePublicationStatus(
+    public ResponseEntity<PublicationDTO> updatePublicationStatus(
             @PathVariable Long id, @RequestParam PublicationStatus status) {
-        return ResponseEntity.ok(publicationService.updatePublicationStatus(id, status));
+        try {
+            return ResponseEntity.ok(publicationService.updatePublicationStatus(id, status));
+        } catch (PublicationNotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PatchMapping("/{id}/view")
