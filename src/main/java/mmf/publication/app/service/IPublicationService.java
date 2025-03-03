@@ -10,7 +10,6 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.Optional;
 
 public interface IPublicationService {
     PublicationDTO createPublication(PublicationRequest request);
@@ -19,14 +18,14 @@ public interface IPublicationService {
                                          PublicationType type, LocalDateTime startDate,
                                          LocalDateTime endDate, Pageable pageable);
 
-    Optional<PublicationDTO> updatePublication(Long id, PublicationRequest request);
+    PublicationDTO updatePublication(Long id, PublicationRequest request) throws PublicationNotFoundException;
 
-    Optional<PublicationDTO> updatePublicationStatus(Long id, PublicationStatus status);
+    PublicationDTO updatePublicationStatus(Long id, PublicationStatus status) throws PublicationNotFoundException;
 
 
     void incrementViewCount(Long id);
 
-    Optional<Map<String, Integer>> findFrequentWordsOfPublication(String publicationDescription);
+    Map<String, Integer> findFrequentWordsOfPublication(String publicationDescription);
 
     PublicationDTO getPublication(Long id) throws PublicationNotFoundException;
 }

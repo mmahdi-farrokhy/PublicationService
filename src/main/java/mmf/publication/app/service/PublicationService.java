@@ -82,15 +82,15 @@ public class PublicationService implements IPublicationService {
         publication.setUpdatedAt(LocalDateTime.now());
         publication.setViewCount(0);
 
-        Optional<Map<String, Integer>> frequentWordsOfPublication = findFrequentWordsOfPublication(description);
-        frequentWordsOfPublication.ifPresent(publication::setFrequentWords);
+        Map<String, Integer> frequentWordsOfPublication = findFrequentWordsOfPublication(description);
+        publication.setFrequentWords(frequentWordsOfPublication);
 
         Publication savedPublication = publicationRepository.save(publication);
         return convertToDTO(savedPublication);
     }
 
     @Override
-    public Optional<PublicationDTO> updatePublication(Long id, PublicationRequest request) {
+    public PublicationDTO updatePublication(Long id, PublicationRequest request) throws PublicationNotFoundException {
         Optional<Publication> publicationById = publicationRepository.findById(id);
 
         if (publicationById.isPresent()) {
@@ -105,26 +105,26 @@ public class PublicationService implements IPublicationService {
             publication.setType(type);
             publication.setStatus(status);
 
-            Optional<Map<String, Integer>> frequentWordsOfPublication = findFrequentWordsOfPublication(description);
-            frequentWordsOfPublication.ifPresent(publication::setFrequentWords);
+            Map<String, Integer> frequentWordsOfPublication = findFrequentWordsOfPublication(description);
+            publication.setFrequentWords(frequentWordsOfPublication);
 
             Publication updatedPublication = publicationRepository.save(publication);
-            return Optional.of(convertToDTO(updatedPublication));
+            return convertToDTO(updatedPublication);
         } else {
-            return Optional.empty();
+            throw new PublicationNotFoundException("Publication with id " + id + " does not exist");
         }
     }
 
     @Override
-    public Optional<PublicationDTO> updatePublicationStatus(Long id, PublicationStatus status) {
+    public PublicationDTO updatePublicationStatus(Long id, PublicationStatus status) throws PublicationNotFoundException {
         Optional<Publication> publicationById = publicationRepository.findById(id);
         if (publicationById.isPresent()) {
             Publication publication = publicationById.get();
             publication.setStatus(status);
             Publication updatedPublication = publicationRepository.save(publication);
-            return Optional.of(convertToDTO(updatedPublication));
+            return convertToDTO(updatedPublication);
         } else {
-            return Optional.empty();
+            throw new PublicationNotFoundException("Publication with id " + id + " does not exist");
         }
     }
 
@@ -138,9 +138,9 @@ public class PublicationService implements IPublicationService {
     }
 
     @Override
-    public Optional<Map<String, Integer>> findFrequentWordsOfPublication(String publicationDescription) {
+    public Map<String, Integer> findFrequentWordsOfPublication(String publicationDescription) {
         if (isInvalidDescription(publicationDescription)) {
-            return Optional.of(Collections.emptyMap());
+            return Collections.emptyMap();
         }
 
         String[] words = removeSpecialCharacters(publicationDescription).split("\\s+");
@@ -163,15 +163,13 @@ public class PublicationService implements IPublicationService {
             }
         }
 
-        Map<String, Integer> frequentWords = minHeap.stream()
+        return minHeap.stream()
                 .sorted(IncrementalSort())
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue,
                         (e1, e2) -> e1,
                         LinkedHashMap::new));
-
-        return Optional.of(frequentWords);
     }
 
     private static Comparator<Map.Entry<String, Integer>> IncrementalSort() {
