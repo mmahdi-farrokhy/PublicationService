@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 
 public interface IPublicationService {
@@ -23,4 +24,6 @@ public interface IPublicationService {
 
 
     void incrementViewCount(Long id);
+
+    Optional<Map<String, Integer>> findFrequentWordsOfPublication(Long id);
 }

@@ -13,6 +13,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -115,5 +116,19 @@ public class PublicationService implements IPublicationService {
             publication.setUpdatedAt(LocalDateTime.now());
             publicationRepository.save(publication);
         });
+    }
+
+    @Override
+    public Optional<Map<String, Integer>> findFrequentWordsOfPublication(Long id) {
+        Optional<Publication> publicationById = publicationRepository.findById(id);
+
+        if(publicationById.isPresent()){
+            Publication publication = publicationById.get();
+            Map<String, Integer> frequentWords = publication.findFrequentWords();
+            return Optional.of(frequentWords);
+        }
+        else {
+            return Optional.empty();
+        }
     }
 }

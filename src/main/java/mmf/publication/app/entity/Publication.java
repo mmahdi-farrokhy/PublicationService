@@ -9,7 +9,8 @@ import mmf.publication.app.enums.PublicationStatus;
 import mmf.publication.app.enums.PublicationType;
 
 import java.time.LocalDateTime;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "publication")
@@ -146,11 +147,48 @@ public class Publication {
         return frequentWords;
     }
 
-    public void setFrequentWords(Map<String, Integer> frequentWords) {
-        this.frequentWords = frequentWords;
-    }
-
     public void incrementViewCount() {
         this.viewCount++;
+    }
+
+    public Map<String, Integer> findFrequentWords() {
+        if (description == null || description.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        // تبدیل به حروف کوچک و حذف علائم نگارشی
+        description = description.toLowerCase().replaceAll("[^a-zA-Z0-9 ]", "");
+
+        // تقسیم متن به کلمات
+        String[] words = description.split("\\s+");
+
+        // شمارش تعداد تکرار هر کلمه
+        Map<String, Integer> wordCount = new HashMap<>();
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                wordCount.put(word, wordCount.getOrDefault(word, 0) + 1);
+            }
+        }
+
+        // استفاده از PriorityQueue (Min Heap) برای پیدا کردن 5 کلمه پرتکرار
+        PriorityQueue<Map.Entry<String, Integer>> minHeap =
+                new PriorityQueue<>(Comparator.comparingInt(Map.Entry::getValue));
+
+        for (Map.Entry<String, Integer> entry : wordCount.entrySet()) {
+            minHeap.offer(entry);
+            if (minHeap.size() > 5) {
+                minHeap.poll(); // حذف کوچک‌ترین مقدار
+            }
+        }
+
+        // انتقال 5 کلمه پرتکرار به LinkedHashMap (برای حفظ ترتیب)
+        return minHeap.stream()
+                .sorted((a, b) -> b.getValue().compareTo(a.getValue())) // مرتب‌سازی نزولی
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
     }
 }
