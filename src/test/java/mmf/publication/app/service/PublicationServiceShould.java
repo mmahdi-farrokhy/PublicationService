@@ -5,6 +5,7 @@ import mmf.publication.app.dto.PublicationRequest;
 import mmf.publication.app.entity.Publication;
 import mmf.publication.app.enums.PublicationStatus;
 import mmf.publication.app.enums.PublicationType;
+import mmf.publication.app.exceptions.PublicationNotFoundException;
 import mmf.publication.app.repository.PublicationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -65,7 +66,7 @@ public class PublicationServiceShould {
     }
 
     @Test
-    void update_an_existing_publication_in_database() {
+    void update_an_existing_publication_in_database() throws PublicationNotFoundException {
         Long publicationId = 1L;
         PublicationRequest request = new PublicationRequest();
         request.setTitle("Updated Title");
@@ -84,17 +85,17 @@ public class PublicationServiceShould {
         when(publicationRepository.findById(publicationId)).thenReturn(Optional.of(publication));
         when(publicationRepository.save(any(Publication.class))).thenReturn(publication);
 
-        Optional<PublicationDTO> reslut = publicationService.updatePublication(publicationId, request);
+        PublicationDTO result = publicationService.updatePublication(publicationId, request);
 
-        assertTrue(reslut.isPresent());
-        assertEquals("Updated Title", reslut.get().getTitle());
-        assertEquals("Updated Description", reslut.get().getDescription());
-        assertEquals(PublicationType.JOURNAL, reslut.get().getType());
-        assertEquals(PublicationStatus.INACTIVE, reslut.get().getStatus());
+        assertNotNull(result);
+        assertEquals("Updated Title", result.getTitle());
+        assertEquals("Updated Description", result.getDescription());
+        assertEquals(PublicationType.JOURNAL, result.getType());
+        assertEquals(PublicationStatus.INACTIVE, result.getStatus());
     }
 
     @Test
-    void return_empty_when_updating_a_non_existing_publication() {
+    void throw_exception_when_updating_a_non_existing_publication() throws PublicationNotFoundException {
         Long publicationId = 1L;
         PublicationRequest request = new PublicationRequest();
         request.setTitle("Updated Title");
@@ -104,9 +105,7 @@ public class PublicationServiceShould {
 
         when(publicationRepository.findById(publicationId)).thenReturn(Optional.empty());
 
-        Optional<PublicationDTO> result = publicationService.updatePublication(publicationId, request);
-
-        assertTrue(result.isEmpty());
+        assertThrows(PublicationNotFoundException.class, () -> publicationService.updatePublication(publicationId, request));
     }
 
     @Test
