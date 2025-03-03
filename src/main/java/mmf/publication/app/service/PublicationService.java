@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class PublicationService implements IPublicationService {
+    public static final int FREQUENT_WORDS_COUNT = 5;
     private final PublicationRepository publicationRepository;
 
     public PublicationService(PublicationRepository publicationRepository) {
@@ -138,12 +139,11 @@ public class PublicationService implements IPublicationService {
 
     @Override
     public Optional<Map<String, Integer>> findFrequentWordsOfPublication(String publicationDescription) {
-        if (publicationDescription == null || publicationDescription.isEmpty()) {
+        if (isInvalidDescription(publicationDescription)) {
             return Optional.of(Collections.emptyMap());
         }
 
-        publicationDescription = publicationDescription.toLowerCase().replaceAll("[^a-zA-Z0-9 ]", "");
-        String[] words = publicationDescription.split("\\s+");
+        String[] words = removeSpecialCharacters(publicationDescription).split("\\s+");
 
         Map<String, Integer> wordCount = new HashMap<>();
         for (String word : words) {
@@ -157,21 +157,34 @@ public class PublicationService implements IPublicationService {
 
         for (Map.Entry<String, Integer> entry : wordCount.entrySet()) {
             minHeap.offer(entry);
-            if (minHeap.size() > 5) {
+
+            if (minHeap.size() > FREQUENT_WORDS_COUNT) {
                 minHeap.poll();
             }
         }
 
         Map<String, Integer> frequentWords = minHeap.stream()
-                .sorted((a, b) -> b.getValue().compareTo(a.getValue()))
+                .sorted(IncrementalSort())
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue,
                         (e1, e2) -> e1,
-                        LinkedHashMap::new
-                ));
+                        LinkedHashMap::new));
 
         return Optional.of(frequentWords);
+    }
+
+    private static Comparator<Map.Entry<String, Integer>> IncrementalSort() {
+        return (a, b) -> b.getValue().compareTo(a.getValue());
+    }
+
+    private static String removeSpecialCharacters(String publicationDescription) {
+        publicationDescription = publicationDescription.toLowerCase().replaceAll("[^a-zA-Z0-9 ]", "");
+        return publicationDescription;
+    }
+
+    private static boolean isInvalidDescription(String publicationDescription) {
+        return publicationDescription == null || publicationDescription.isEmpty();
     }
 
     @Override
