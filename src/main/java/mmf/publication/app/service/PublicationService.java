@@ -2,6 +2,7 @@ package mmf.publication.app.service;
 
 import mmf.publication.app.dto.PublicationDTO;
 import mmf.publication.app.dto.PublicationRequest;
+import mmf.publication.app.entity.AppUser;
 import mmf.publication.app.entity.Publication;
 import mmf.publication.app.enums.PublicationStatus;
 import mmf.publication.app.enums.PublicationType;
@@ -21,9 +22,11 @@ import java.util.stream.Collectors;
 public class PublicationService implements IPublicationService {
     public static final int FREQUENT_WORDS_COUNT = 5;
     private final PublicationRepository publicationRepository;
+    private final AppUserService appUserService;
 
-    public PublicationService(PublicationRepository publicationRepository) {
+    public PublicationService(PublicationRepository publicationRepository, AppUserService appUserService) {
         this.publicationRepository = publicationRepository;
+        this.appUserService = appUserService;
     }
 
     @Override
@@ -67,7 +70,10 @@ public class PublicationService implements IPublicationService {
     }
 
     @Override
-    public PublicationDTO createPublication(PublicationRequest request) {
+    public PublicationDTO createPublication(PublicationRequest request, String username) {
+        AppUser userFromDb = appUserService.findByUsername(username);
+
+
         String description = request.getDescription();
         String title = request.getTitle();
         PublicationType type = request.getType();
@@ -81,6 +87,7 @@ public class PublicationService implements IPublicationService {
         publication.setPublishedAt(LocalDateTime.now());
         publication.setUpdatedAt(LocalDateTime.now());
         publication.setViewCount(0);
+        publication.setAppUser(userFromDb);
 
         Map<String, Integer> frequentWordsOfPublication = findFrequentWordsOfPublication(description);
         publication.setFrequentWords(frequentWordsOfPublication);

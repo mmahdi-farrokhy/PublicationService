@@ -18,7 +18,7 @@ public class AppUser {
     @Column(nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "app_user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Publication> publications = new ArrayList<>();
 
     public AppUser() {

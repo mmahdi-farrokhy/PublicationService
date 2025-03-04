@@ -47,9 +47,9 @@ public class PublicationController {
         return ResponseEntity.ok(publicationService.getPublications(search, status, type, startDate, endDate, pageable));
     }
 
-    @PostMapping
-    public ResponseEntity<PublicationDTO> createPublication(@RequestBody PublicationRequest request) {
-        return ResponseEntity.ok(publicationService.createPublication(request));
+    @PostMapping("/{username}")
+    public ResponseEntity<PublicationDTO> createPublication(@RequestBody PublicationRequest request, @PathVariable String username) {
+        return ResponseEntity.ok(publicationService.createPublication(request, username));
     }
 
     @PutMapping("/{id}")

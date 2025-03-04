@@ -29,6 +29,9 @@ public class PublicationServiceShould {
     @Mock
     private PublicationRepository publicationRepository;
 
+    @Mock
+    private AppUserService appUserService;
+
     @InjectMocks
     private PublicationService publicationService;
 
@@ -57,7 +60,7 @@ public class PublicationServiceShould {
 
         when(publicationRepository.save(any(Publication.class))).thenReturn(publication);
 
-        PublicationDTO result = publicationService.createPublication(request);
+        PublicationDTO result = publicationService.createPublication(request, "Username");
         assertNotNull(result);
         assertEquals("Test Title", result.getTitle());
         assertEquals("Test Description", result.getDescription());

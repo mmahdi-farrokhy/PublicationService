@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 public interface IPublicationService {
-    PublicationDTO createPublication(PublicationRequest request);
+    PublicationDTO createPublication(PublicationRequest request, String username);
 
     Page<PublicationDTO> getPublications(String search, PublicationStatus status,
                                          PublicationType type, LocalDateTime startDate,
