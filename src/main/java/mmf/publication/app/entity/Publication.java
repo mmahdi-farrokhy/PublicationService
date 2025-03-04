@@ -43,6 +43,10 @@ public class Publication {
     @Column(name = "frequency")
     private Map<String, Integer> frequentWords;
 
+    @ManyToOne
+    @JoinColumn(name = "app_user_id", nullable = false)
+    private AppUser appUser;
+
     @PreUpdate
     private void preUpdate() {
         this.updatedAt = LocalDateTime.now();
@@ -140,6 +144,14 @@ public class Publication {
 
     public Map<String, Integer> getFrequentWords() {
         return frequentWords;
+    }
+
+    public AppUser getAppUser() {
+        return appUser;
+    }
+
+    public void setAppUser(AppUser appUser) {
+        this.appUser = appUser;
     }
 
     public void setFrequentWords(Map<String, Integer> frequentWords) {
